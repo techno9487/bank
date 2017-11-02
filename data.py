@@ -3,6 +3,7 @@ class Customer:
         self.name = name
         self.address = address
         self.dob = dob
+        self.accounts = []
 
 class Transaction:
     def __init__(self,id,amount,note):

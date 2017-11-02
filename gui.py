@@ -17,6 +17,11 @@ class MainAppliation(tk.Frame):
         pwd = tk.Entry(self.parent,width=50,show='*')
         pwd.pack()
 
+        login = tk.Button(self.parent,text='Login',command=self.try_login)
+        login.pack()
+    def try_login(self):
+        pass
+
 root = tk.Tk()
 root.title('Bank System')
 app = MainAppliation(root)
