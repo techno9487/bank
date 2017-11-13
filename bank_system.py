@@ -13,7 +13,6 @@ class BankSystem(object):
     def load_bank_data(self):
         pass
 
-
     def customer_login(self, name, password):
         #STEP A.1
         pass
