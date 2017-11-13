@@ -19,3 +19,6 @@ class Person(object):
         if self.password == password:
             return True
         return False
+
+    def save(self):
+        return {"name":self.name}

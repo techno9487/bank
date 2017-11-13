@@ -10,3 +10,8 @@ class Admin(Person):
     def has_full_admin_right(self):
         return self.full_admin_rights
 
+    def save(self):
+        obj = super().save()
+        obj["admin"] = self.full_admin_rights
+        return obj
+

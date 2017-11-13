@@ -1,11 +1,7 @@
 from customer import Customer
 from admin import Admin
 from account import Account
-
-
-customers_list = []
-admins_list = []
-
+import os
 	
 class BankSystem(object):
     def __init__(self):
@@ -37,7 +33,3 @@ class BankSystem(object):
     def search_admin_by_name(self, admin_name):
         # STEP A.4
         pass
-
-
-app = BankSystem()
-app.run_main_option()

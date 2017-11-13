@@ -14,4 +14,10 @@ class Account:
         def get_account_no(self):
                 return self.account_no
 
+        def save(self):
+                return {
+                        balance:self.balance,
+                        acc_no:self.account_no
+                }
+
 

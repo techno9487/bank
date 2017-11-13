@@ -24,6 +24,10 @@ class MainAppliation(tk.Frame):
     def try_login(self):
         pass
 
+class RegisterPerson(tk.Frame):
+    def __init__(self,parent):
+        tk.Frame.__init__(self,parent)
+
 root = tk.Tk()
 root.title('Bank System')
 app = MainAppliation(root)
