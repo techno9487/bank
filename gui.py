@@ -20,13 +20,22 @@ class MainAppliation(tk.Frame):
         self.pwd.grid(row=1,column=1)
 
         login = ttk.Button(self.parent,text='Login',command=self.try_login)
-        login.grid(row = 2,column=1,sticky=tk.E)
+        login.grid(row = 2,column=1,sticky=tk.W)
+
+        register = ttk.Button(self.parent,text="Register",command=self.register)
+        register.grid(row=2,column=1,sticky=tk.E)
     def try_login(self):
+        pass
+    def register(self):
         pass
 
 class RegisterPerson(tk.Frame):
     def __init__(self,parent):
         tk.Frame.__init__(self,parent)
+        self.parent = parent
+
+        idlabel = tk.Label(self.parent,text="Name")
+        idlabel.grid(column=0)
 
 root = tk.Tk()
 root.title('Bank System')
