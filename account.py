@@ -1,6 +1,5 @@
 
 class Account:
-
         def __init__(self, balance, account_no):
                 self.balance = float(balance)
                 self.account_no = account_no
@@ -19,5 +18,8 @@ class Account:
                         balance:self.balance,
                         acc_no:self.account_no
                 }
+        def load(self,obj):
+                self.balance = obj["balance"]
+                self.account_no = obj["acc_no"]
 
 

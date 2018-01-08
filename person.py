@@ -21,4 +21,8 @@ class Person(object):
         return False
 
     def save(self):
-        return {"name":self.name}
+        return {"name":self.name,"password":self.password,"address":self.address}
+    def load(self,obj):
+        self.name  = obj["name"]
+        self.password = obj["password"]
+        self.address = obj["address"]
