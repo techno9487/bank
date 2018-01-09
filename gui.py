@@ -82,18 +82,42 @@ class CustomerWindow(tk.Frame):
         navbar.grid(row=0,column=0)
         self.draw_navbar(navbar)
 
-        account_list = tk.Frame(self.parent,width=100)
-        account_list.grid(row=0,column=1,columnspan=3)
+        account_list = tk.Frame(self.parent)
+        account_list.grid(row=0,column=1)
         self.draw_accounts(account_list)
     def draw_navbar(self,frame):
         self.open_acc = ttk.Button(frame,text="Open Account",command=self.open_account)
-        self.open_acc.pack()
+        self.open_acc.grid(sticky=tk.N)
+    def open_transfer(self,acc):
+        window = tk.Toplevel()
+        TransferWindow(window,acc)
     def draw_accounts(self,frame):
-        pass
+        for acc in self.customer.get_accounts():
+            acc_frame = tk.Frame(frame,bd=1)
+
+            id = tk.Label(acc_frame,text="Account Number: %d" % acc.account_no)
+            id.grid()
+
+            balance = tk.Label(acc_frame,text="Balance %.2f" % acc.balance)
+            balance.grid(row=1,sticky=tk.W)
+
+            transfer_monies = ttk.Button(frame,text="Transfer Money",command=lambda: self.open_transfer(acc))
+            transfer_monies.grid(row=0,column=2,sticky=tk.W)
+
+            acc_frame.pack()
     def open_account(self):
         self.customer.open_account()
         bank .save_bank_data()
         
+class TransferWindow:
+    def __init__(self,parent,acc):
+        self.parent = parent
+
+        self.name_label = tk.Label(self.parent,text="Name:")
+        self.name_label.grid(row=0,column=0)
+
+        self.name = ttk.Entry(self.parent)
+        self.name.grid(row=0,column=1)
 
 
 bank = BankSystem()

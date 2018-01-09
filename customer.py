@@ -12,8 +12,8 @@ class Customer(Person):
         acc = Account(100,int(time.time()))
         self.accounts.append(acc)
 
-    def get_account(self):
-        return self.account
+    def get_accounts(self):
+        return self.accounts
 
     def find_account(self,acc_no):
         for acc in self.accounts:
@@ -21,24 +21,6 @@ class Customer(Person):
                 return acc
 
         return None
-
-    def transfer(self,bank,sender_acc_no, receiver_name, receiver_account_no, amount):
-        acc = self.find_account(sender_acc_no)
-        if acc == None:
-            return "your accoutn doesn't exist"
-
-        if acc.balance < amount:
-            return "you don't have enough money to make this transaction"
-        
-        receiver = bank.search_customers_by_name(receiver_name)
-        if receiver == None:
-            return "Customer can't be found"
-
-        receiver_acc = receiver.find_account(receiver_account_no)
-        if receiver_acc == None:
-            return "customer doesn't have account with that number"
-
-        acc.balance = acc.balance-amount
 
         receiver_acc.balance = receiver_acc.balance+amount
     def save(self):
@@ -48,3 +30,9 @@ class Customer(Person):
             obj["accounts"].append(acc.save())
 
         return obj
+    def load(self,obj):
+        super().load(obj)
+        accounts = obj["accounts"]
+        for acc_data in accounts:
+            acc = Account(acc_data["balance"],acc_data["acc_no"])
+            self.accounts.append(acc)
