@@ -1,1 +1,18 @@
-{"customers": [{"name": "Toby Dunn", "password": "password", "address": ["1 somewhere place"]}]}
+{
+    "customers": [
+        {
+            "name": "Toby Dunn",
+            "password": "password",
+            "address": [
+                "1 somewhere place",
+                ""
+            ],
+            "accounts": [
+                {
+                    "balance": 100.0,
+                    "acc_no": 1515526228
+                }
+            ]
+        }
+    ]
+}

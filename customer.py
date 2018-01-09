@@ -8,8 +8,8 @@ class Customer(Person):
         super().__init__(name, password, address)
         self.accounts = []
 
-    def open_account(self, account):
-        acc = Account(100,time.time())
+    def open_account(self):
+        acc = Account(100,int(time.time()))
         self.accounts.append(acc)
 
     def get_account(self):
@@ -41,8 +41,10 @@ class Customer(Person):
         acc.balance = acc.balance-amount
 
         receiver_acc.balance = receiver_acc.balance+amount
-    def save():
+    def save(self):
         obj = super().save()
         obj["accounts"] = []
         for acc in self.accounts:
             obj["accounts"].append(acc.save())
+
+        return obj

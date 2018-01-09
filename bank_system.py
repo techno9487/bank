@@ -21,6 +21,8 @@ class BankSystem(object):
     #load customers from the data
     def load_customers(self):
         for customer in self.data["customers"]:
+            if customer == None:
+                continue
             cus = Customer(None,None,None)
             cus.load(customer)
             self.customers.append(cus)
@@ -51,6 +53,7 @@ class BankSystem(object):
 
         cus = Customer(name,password,address)
         self.customers.append(cus)
+        print("Created customer %s" % name)
         self.save_bank_data()
         return cus
 

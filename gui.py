@@ -84,11 +84,15 @@ class CustomerWindow(tk.Frame):
 
         account_list = tk.Frame(self.parent,width=100)
         account_list.grid(row=0,column=1,columnspan=3)
+        self.draw_accounts(account_list)
     def draw_navbar(self,frame):
         self.open_acc = ttk.Button(frame,text="Open Account",command=self.open_account)
         self.open_acc.pack()
-    def open_account(self):
+    def draw_accounts(self,frame):
         pass
+    def open_account(self):
+        self.customer.open_account()
+        bank .save_bank_data()
         
 
 

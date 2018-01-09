@@ -15,8 +15,8 @@ class Account:
 
         def save(self):
                 return {
-                        balance:self.balance,
-                        acc_no:self.account_no
+                        "balance":self.balance,
+                        "acc_no":self.account_no
                 }
         def load(self,obj):
                 self.balance = obj["balance"]
