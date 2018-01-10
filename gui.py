@@ -91,6 +91,7 @@ class CustomerWindow(tk.Frame):
     def open_transfer(self,acc):
         window = tk.Toplevel()
         TransferWindow(window,acc)
+        print("opening transfer window: %d" % acc.account_no)
     def draw_accounts(self,frame):
         for acc in self.customer.get_accounts():
             acc_frame = tk.Frame(frame,bd=1)
@@ -101,7 +102,7 @@ class CustomerWindow(tk.Frame):
             balance = tk.Label(acc_frame,text="Balance %.2f" % acc.balance)
             balance.grid(row=1,sticky=tk.W)
 
-            transfer_monies = ttk.Button(acc_frame,text="Transfer Money",command=self.open_transfer(acc))
+            transfer_monies = ttk.Button(acc_frame,text="Transfer Money",command=lambda: self.open_transfer(acc))
             transfer_monies.grid(row=2,column=0,sticky=tk.W)
 
             acc_frame.pack()
