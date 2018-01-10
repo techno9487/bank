@@ -6,6 +6,7 @@ class BankSystem(object):
     def __init__(self):
         self.data = {}
         self.customers = []
+        self.admins = []
         self.load_bank_data()
         
     #load bank data from disk
@@ -17,6 +18,7 @@ class BankSystem(object):
             self.data = json.loads(data)
 
             self.load_customers()
+            self.load_admins()
 
     #load customers from the data
     def load_customers(self):
@@ -25,7 +27,20 @@ class BankSystem(object):
                 continue
             cus = Customer(None,None,None)
             cus.load(customer)
+            print("Loaded customer: %s" % cus.get_name())
             self.customers.append(cus)
+
+    #load admins from data
+    def load_admins(self):
+        for admin in self.data["admins"]:
+            if admin == None:
+                continue
+
+            ad = Admin(None,None,None)
+            ad.load(admin)
+            self.admins.append(ad)
+
+            print("Loaded admin: %s" % ad.get_name())
 
     def customer_login(self, name, password):
         #STEP A.1
@@ -58,18 +73,29 @@ class BankSystem(object):
         return cus
 
     def admin_login(self, name, password):
-        # STEP A.3
-        pass
+        admin = self.search_admin_by_name(name)
+        if admin == None:
+            return None
+        if admin.check_password(password) == False:
+            return None
+
+        return admin
 
 
     def search_admin_by_name(self, admin_name):
-        # STEP A.4
-        pass
+        for admin in self.admins:
+            if admin.get_name() == admin_name:
+                return admin
+        return None
 
     def save_bank_data(self):
         customers_data = []
         for customer in self.customers:
             customers_data.append(customer.save())
+
+        admnins_data = []
+        for admin in self.admins:
+            admnins_data.append(admin.save())
 
         data = json.dumps({
             "customers":customers_data

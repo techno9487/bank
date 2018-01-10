@@ -9,8 +9,9 @@ class Person(object):
     def get_address(self):
         return self.address
 
-    def update_name(self, name):
+    def update(self,name,address):
         self.name = name
+        self.address = address
         
     def get_name(self):
         return self.name

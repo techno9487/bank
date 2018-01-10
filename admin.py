@@ -14,4 +14,7 @@ class Admin(Person):
         obj = super().save()
         obj["admin"] = self.full_admin_rights
         return obj
+    def load(self,obj):
+        super().load(obj)
+        self.full_admin_rights = obj["admin"]
 

@@ -4,18 +4,27 @@
             "name": "Toby Dunn",
             "password": "password",
             "address": [
-                "1 somewhere place",
-                ""
+                "1 somewhere lane"
             ],
             "accounts": [
                 {
-                    "balance": 89.57,
+                    "balance": 189.57,
                     "acc_no": 1515526228
                 },
                 {
-                    "balance": 110.43,
+                    "balance": 100.0,
                     "acc_no": 1515530267
                 }
+            ]
+        }
+    ],
+    "admins":[
+        {
+            "name":"admin",
+            "password":"password",
+            "admin":true,
+            "address":[
+                "2 somewhere place"
             ]
         }
     ]
