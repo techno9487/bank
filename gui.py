@@ -307,22 +307,22 @@ class AdminWindow:
         self.parent.title("Admin")
 
         self.cus_search = tk.Frame(self.parent)
-        self.cus_search.grid()
+        self.cus_search.grid(sticky=tk.N)
         self.draw_search(self.cus_search)
 
         self.customer_operations = tk.Frame(self.parent)
-        self.customer_operations.grid(column=1)
+        self.customer_operations.grid(row=0,column=1,sticky=tk.N)
     def draw_search(self,frame):
         frame.config( highlightbackground="green", highlightcolor="green", highlightthickness=1,bd=0)
 
         title = tk.Label(frame,text="Customer Search")
-        title.grid(columnspan=2)
+        title.grid(row=0,columnspan=2)
 
         name_label = tk.Label(frame,text="Name:")
         name_label.grid(row=1,sticky=tk.W)
 
         self.customer_search_name = ttk.Entry(frame)
-        self.customer_search_name.grid(row=0,column=1)
+        self.customer_search_name.grid(row=1,column=1)
 
         search = ttk.Button(frame,text="Search",command=self.search_customer)
         search.grid(row=2,columnspan=2)
@@ -341,16 +341,43 @@ class CustomerOperations:
         self.parent.config( highlightbackground="green", highlightcolor="green", highlightthickness=1,bd=0)
 
         self.options = tk.Frame(self.parent)
-        self.options.grid()
+        self.options.grid(sticky=tk.N)
         self.draw_options()
+
+        self.customer_info = tk.Frame(self.parent)
+        self.customer_info.grid(row=1,column=0)
+        self.redraw_info()
     def clear(self):
         for child in self.parent.winfo_children():
             child.destroy()
     def draw_options(self):
         self.options.config( highlightbackground="blue", highlightcolor="blue", highlightthickness=1,bd=0)
 
-        close = ttk.Button(self.options,text="close account",command=self.close_account)
+        close = ttk.Button(self.options,text="Close account",command=self.close_account)
         close.grid()
+
+        update = ttk.Button(self.options,text="Update information",command=self.update_info)
+        update.grid(column=1,row=0)
+    def update_info(self):
+        UpdateCustomerRecordsDiag(self.customer,self).show()
+    def redraw_info(self):
+        for child in self.customer_info.winfo_children():
+            child.destroy()
+
+        self.customer_info.config( highlightbackground="blue", highlightcolor="blue", highlightthickness=1,bd=0)
+
+        name = "Name: %s" % self.customer.get_name()
+        name_label = tk.Label(self.customer_info,text=name)
+        name_label.grid(row=0,column=0,sticky=tk.W)
+
+        address = "Address: "
+        for a in self.customer.get_address():
+            address += "%s\n" % a
+
+        address_label = tk.Label(self.customer_info,text=address)
+        address_label.grid(row=1,column=0)   
+
+        self.customer_info.columnconfigure(1, weight=1)  
     def close_account(self):
         self.clear()
         bank.remove_customer(self.customer)
