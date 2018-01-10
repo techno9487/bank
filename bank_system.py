@@ -71,6 +71,10 @@ class BankSystem(object):
         print("Created customer %s" % name)
         self.save_bank_data()
         return cus
+    def remove_customer(self,customer):
+        self.customers.remove(customer)
+        self.save_bank_data()
+        print("Closed account of %s" % customer.get_name())
 
     def admin_login(self, name, password):
         admin = self.search_admin_by_name(name)
@@ -98,7 +102,8 @@ class BankSystem(object):
             admnins_data.append(admin.save())
 
         data = json.dumps({
-            "customers":customers_data
+            "customers":customers_data,
+            "admins":admnins_data
         },indent=4)
         f = open("data.json","w")
         f.write(data)

@@ -309,6 +309,9 @@ class AdminWindow:
         self.cus_search = tk.Frame(self.parent)
         self.cus_search.grid()
         self.draw_search(self.cus_search)
+
+        self.customer_operations = tk.Frame(self.parent)
+        self.customer_operations.grid(column=1)
     def draw_search(self,frame):
         frame.config( highlightbackground="green", highlightcolor="green", highlightthickness=1,bd=0)
 
@@ -318,11 +321,40 @@ class AdminWindow:
         name_label = tk.Label(frame,text="Name:")
         name_label.grid(row=1,sticky=tk.W)
 
-        name = ttk.Entry(frame)
-        name.grid(row=1,column=1)
+        self.customer_search_name = ttk.Entry(frame)
+        self.customer_search_name.grid(row=0,column=1)
 
-        search = ttk.Button(frame,text="Search")
+        search = ttk.Button(frame,text="Search",command=self.search_customer)
         search.grid(row=2,columnspan=2)
+    def search_customer(self):
+        customer = bank.search_customers_by_name(self.customer_search_name.get())
+        self.customer_search_name.delete(0,tk.END)
+        if customer != None:
+            CustomerOperations(self.customer_operations,customer)
+
+
+class CustomerOperations:
+    def __init__(self,frame,customer):
+        self.parent = frame
+        self.customer = customer
+
+        self.parent.config( highlightbackground="green", highlightcolor="green", highlightthickness=1,bd=0)
+
+        self.options = tk.Frame(self.parent)
+        self.options.grid()
+        self.draw_options()
+    def clear(self):
+        for child in self.parent.winfo_children():
+            child.destroy()
+    def draw_options(self):
+        self.options.config( highlightbackground="blue", highlightcolor="blue", highlightthickness=1,bd=0)
+
+        close = ttk.Button(self.options,text="close account",command=self.close_account)
+        close.grid()
+    def close_account(self):
+        self.clear()
+        bank.remove_customer(self.customer)
+
 
 bank = BankSystem()
 

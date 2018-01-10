@@ -18,14 +18,14 @@
             ]
         }
     ],
-    "admins":[
+    "admins": [
         {
-            "name":"admin",
-            "password":"password",
-            "admin":true,
-            "address":[
-                "2 somewhere place"
-            ]
+            "name": "admin",
+            "password": "password",
+            "address": [
+                "1 road place"
+            ],
+            "admin": true
         }
     ]
 }
