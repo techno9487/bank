@@ -114,11 +114,16 @@ class TransferWindow:
     def __init__(self,parent,acc):
         self.parent = parent
 
+        self.parent.title("Transfer from: %d" % acc.account_no)
+
         self.name_label = tk.Label(self.parent,text="Name:")
         self.name_label.grid(row=0,column=0)
 
         self.name = ttk.Entry(self.parent)
         self.name.grid(row=0,column=1)
+
+        self.acc_no_label = tk.Label(self.parent,text="Account:")
+        self.acc_no_label.grid(row=1,column=0)
 
 
 bank = BankSystem()
