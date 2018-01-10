@@ -33,7 +33,16 @@ class Account:
                 if receiver_acc == None:
                         return "customer doesn't have account with that number"
 
-                self.balance = acc.balance-amount
+                if receiver_acc.account_no == self.account_no:
+                        return "your trying to transfer to&from the same account"
+
+                self.balance = self.balance-amount
+                print(self.balance)
                 receiver_acc.balance = receiver_acc.balance+amount
+
+                print("Transaction completed %.2f transfered from %d to %d balances are now %.2f and %.2f" % (amount,self.account_no,receiver_account_no,self.balance,receiver_acc.balance))
+
+                #if no error return None
+                return None
 
 

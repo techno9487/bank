@@ -82,17 +82,20 @@ class CustomerWindow(tk.Frame):
         navbar.grid(row=0,column=0)
         self.draw_navbar(navbar)
 
-        account_list = tk.Frame(self.parent)
-        account_list.grid(row=0,column=1)
-        self.draw_accounts(account_list)
+        self.account_list = tk.Frame(self.parent)
+        self.account_list.grid(row=0,column=1)
+        self.draw_accounts(self.account_list)
     def draw_navbar(self,frame):
         self.open_acc = ttk.Button(frame,text="Open Account",command=self.open_account)
         self.open_acc.grid(sticky=tk.N)
     def open_transfer(self,acc):
         window = tk.Toplevel()
-        TransferWindow(window,acc)
+        TransferWindow(window,acc,self)
         print("opening transfer window: %d" % acc.account_no)
     def draw_accounts(self,frame):
+        for child in frame.winfo_children():
+            child.destroy()
+
         for acc in self.customer.get_accounts():
             acc_frame = tk.Frame(frame,bd=1)
 
@@ -102,17 +105,21 @@ class CustomerWindow(tk.Frame):
             balance = tk.Label(acc_frame,text="Balance %.2f" % acc.balance)
             balance.grid(row=1,sticky=tk.W)
 
-            transfer_monies = ttk.Button(acc_frame,text="Transfer Money",command=lambda: self.open_transfer(acc))
+            transfer_monies = ttk.Button(acc_frame,text="Transfer Money",command=lambda acc=acc: self.open_transfer(acc))
             transfer_monies.grid(row=2,column=0,sticky=tk.W)
 
             acc_frame.pack()
     def open_account(self):
         self.customer.open_account()
         bank .save_bank_data()
-        
+    def redraw_accounts(self):
+        self.draw_accounts(self.account_list)
+
 class TransferWindow:
-    def __init__(self,parent,acc):
+    def __init__(self,parent,acc,window):
         self.parent = parent
+        self.acc = acc
+        self.window = window
 
         self.parent.title("Transfer from: %d" % acc.account_no)
 
@@ -124,6 +131,35 @@ class TransferWindow:
 
         self.acc_no_label = tk.Label(self.parent,text="Account:")
         self.acc_no_label.grid(row=1,column=0)
+
+        self.acc_no = ttk.Entry(self.parent)
+        self.acc_no.grid(row=1,column=1)
+
+        self.amount_label = tk.Label(self.parent,text="Amount:")
+        self.amount_label.grid(row=2,column=0)
+
+        self.amount = ttk.Entry(self.parent)
+        self.amount.grid(row=2,column=1)
+
+        self.transfer = ttk.Button(self.parent,text="Transfer",command=self.transfer)
+        self.transfer.grid(row=3,column=0,columnspan=2)
+    def transfer(self):
+        amt = 0
+        acc_no = 0
+        try:
+            amt = float(self.amount.get())
+            acc_no = int(self.acc_no.get())
+        except ValueError:
+            return
+
+
+        error = self.acc.transfer(bank,self.name.get(),acc_no,amt)
+        if error == None:
+            self.window.redraw_accounts()
+            bank.save_bank_data()
+            self.parent.destroy()
+        else:
+            messagebox.showerror("Transfer",error)
 
 
 bank = BankSystem()
