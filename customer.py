@@ -8,8 +8,8 @@ class Customer(Person):
         super().__init__(name, password, address)
         self.accounts = []
 
-    def open_account(self):
-        acc = Account(100,int(time.time()))
+    def open_account(self,addr):
+        acc = Account(100,int(time.time()),addr)
         self.accounts.append(acc)
 
     def get_accounts(self):
@@ -48,6 +48,8 @@ class Customer(Person):
         for a in self.accounts:
             print("Account Number: %d" % a.account_no)
             print("Balance: %.2f\n" % a.balance)
+            print("Type: %s" % a.attr.type)
+            print("Intrest: %.2f" % a.attr.intrest)
 
 
         print('------------------------------')

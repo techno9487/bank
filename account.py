@@ -1,8 +1,14 @@
 
+class AccountAttributes:
+        def __init__(self,type,intrest):
+                self.type = type
+                self.intrest = intrest
+
 class Account:
-        def __init__(self, balance, account_no):
+        def __init__(self, balance, account_no,attr):
                 self.balance = float(balance)
                 self.account_no = account_no
+                self.attr = attr
 
         def deposit(self, amount):
                 self.balance+=amount
@@ -16,11 +22,17 @@ class Account:
         def save(self):
                 return {
                         "balance":self.balance,
-                        "acc_no":self.account_no
+                        "acc_no":self.account_no,
+                        "attr":{
+                                "type":self.attr.type,
+                                "intrest":self.attr.intrest
+                        }
                 }
         def load(self,obj):
                 self.balance = obj["balance"]
                 self.account_no = obj["acc_no"]
+                self.attr.intrest = obj["attr"]['intrest']
+                self.attr.type = obj['attr']['type']
         def transfer(self,bank, receiver_name, receiver_account_no, amount):
                 if self.balance < amount:
                         return "you don't have enough money to make this transaction"

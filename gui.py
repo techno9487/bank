@@ -80,6 +80,28 @@ class RegisterPerson(tk.Frame):
         
         self.parent.destroy()
 
+class OpenAccountDiag:
+    def __init__(self,customer):
+        self.parent = tk.Toplevel()
+
+        self.intrest = tk.StringVar(self.parent)
+        self.intrest.set("1.00")
+
+        self.intrest_label = tk.Label(self.parent,text="Intrest:")
+        self.intrest_label.grid()
+
+        self.intrest_options = tk.OptionMenu(self.parent,self.intrest,"0.5","5.0")
+        self.intrest_options.grid(row=0,column=1)
+
+        self.type_label = tk.Label(self.parent,text="Type:")
+        self.type_label.grid(row=1,column=0)
+
+        self.type = tk.StringVar(self.parent)
+        self.type_option = tk.OptionMenu(self.parent,self.type,"Current Account","ISA")
+        self.type_option.grid(row=1,column=1)
+    def show(self):
+        self.parent.wait_window()
+
 class CustomerWindow(tk.Frame):
     def __init__(self,parent,customer):
         tk.Frame.__init__(self,parent)
@@ -125,19 +147,26 @@ class CustomerWindow(tk.Frame):
             balance = tk.Label(acc_frame,text="Balance: %.2f" % acc.balance)
             balance.grid(row=1,sticky=tk.W)
 
+            acc_type = tk.Label(acc_frame,text="Type: %s" % acc.attr.type)
+            acc_type.grid(row = 2,column=0,sticky=tk.W)
+
+            acc_intrest = tk.Label(acc_frame,text="Intrest: %.2f" % acc.attr.intrest)
+            acc_intrest.grid(row=3,column=0,sticky=tk.W)
+
             transfer_monies = ttk.Button(acc_frame,text="Transfer Money",command=lambda acc=acc: self.open_transfer(acc))
-            transfer_monies.grid(row=2,column=0,sticky=tk.E)
+            transfer_monies.grid(row=4,column=0,sticky=tk.E)
 
             deposit_monies = ttk.Button(acc_frame,text="Deposit",command=lambda acc=acc:self.deposit(acc))
-            deposit_monies.grid(row=2,column=1)
+            deposit_monies.grid(row=4,column=1)
 
             withdraw = ttk.Button(acc_frame,text="Withdraw",command=lambda acc=acc:self.withdraw(acc))
-            withdraw.grid(row=2,column=2)
+            withdraw.grid(row=4,column=2)
 
             acc_frame.pack()
     def open_account(self):
-        self.customer.open_account()
+        OpenAccountDiag(self.customer).show()
         bank .save_bank_data()
+        self.redraw_accounts()
     def redraw_accounts(self):
         self.draw_accounts(self.account_list)
     def deposit(self,acc):
