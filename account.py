@@ -29,9 +29,12 @@ class Account:
                         }
                 }
         def load(self,obj):
+
+                self.attr = AccountAttributes(None,None)
+
                 self.balance = obj["balance"]
                 self.account_no = obj["acc_no"]
-                self.attr.intrest = obj["attr"]['intrest']
+                self.attr.intrest = obj["attr"]["intrest"]
                 self.attr.type = obj['attr']['type']
         def transfer(self,bank, receiver_name, receiver_account_no, amount):
                 if self.balance < amount:

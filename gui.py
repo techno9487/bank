@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk,messagebox
 import logging
 from bank_system import BankSystem
+from account import AccountAttributes
 
 class MainAppliation(tk.Frame):
     def __init__(self,parent):
@@ -83,6 +84,7 @@ class RegisterPerson(tk.Frame):
 class OpenAccountDiag:
     def __init__(self,customer):
         self.parent = tk.Toplevel()
+        self.customer = customer
 
         self.intrest = tk.StringVar(self.parent)
         self.intrest.set("1.00")
@@ -97,11 +99,17 @@ class OpenAccountDiag:
         self.type_label.grid(row=1,column=0)
 
         self.type = tk.StringVar(self.parent)
+        self.type.set("Current Account")
         self.type_option = tk.OptionMenu(self.parent,self.type,"Current Account","ISA")
-        self.type_option.grid(row=1,column=1)
+        self.type_option.grid(row=1,column=1,sticky="ew")
+
+        button = ttk.Button(self.parent,text="Open Account",command=self.parent.destroy)
+        button.grid(row=2,column=0,columnspan=2)
     def show(self):
         self.parent.wait_window()
-
+        attr = AccountAttributes(self.type.get(),self.intrest.get())
+        self.customer.open_account(attr)
+        
 class CustomerWindow(tk.Frame):
     def __init__(self,parent,customer):
         tk.Frame.__init__(self,parent)
@@ -150,7 +158,7 @@ class CustomerWindow(tk.Frame):
             acc_type = tk.Label(acc_frame,text="Type: %s" % acc.attr.type)
             acc_type.grid(row = 2,column=0,sticky=tk.W)
 
-            acc_intrest = tk.Label(acc_frame,text="Intrest: %.2f" % acc.attr.intrest)
+            acc_intrest = tk.Label(acc_frame,text="Intrest: %s" % acc.attr.intrest)
             acc_intrest.grid(row=3,column=0,sticky=tk.W)
 
             transfer_monies = ttk.Button(acc_frame,text="Transfer Money",command=lambda acc=acc: self.open_transfer(acc))
@@ -462,14 +470,20 @@ class CustomerOperations:
             balance = tk.Label(acc_frame,text="Balance: %.2f" % acc.balance)
             balance.grid(row=1,sticky=tk.W)
 
+            acc_type = tk.Label(acc_frame,text="Type: %s" % acc.attr.type)
+            acc_type.grid(row = 2,column=0,sticky=tk.W)
+
+            acc_intrest = tk.Label(acc_frame,text="Intrest: %s" % acc.attr.intrest)
+            acc_intrest.grid(row=3,column=0,sticky=tk.W)
+
             transfer_monies = ttk.Button(acc_frame,text="Transfer Money",command=lambda acc=acc: self.open_transfer(acc))
-            transfer_monies.grid(row=2,column=0,sticky=tk.E)
+            transfer_monies.grid(row=4,column=0,sticky=tk.E)
 
             deposit_monies = ttk.Button(acc_frame,text="Deposit",command=lambda acc=acc:self.deposit(acc))
-            deposit_monies.grid(row=2,column=1)
+            deposit_monies.grid(row=4,column=1)
 
             withdraw = ttk.Button(acc_frame,text="Withdraw",command=lambda acc=acc:self.withdraw(acc))
-            withdraw.grid(row=2,column=2)
+            withdraw.grid(row=4,column=2)
 
             acc_frame.pack()
     def deposit(self,acc):

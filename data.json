@@ -6,7 +6,24 @@
             "address": [
                 "1 somewhere place"
             ],
-            "accounts": []
+            "accounts": [
+                {
+                    "balance": 100.0,
+                    "acc_no": 1515673951,
+                    "attr": {
+                        "type": "Current Account",
+                        "intrest": "1.00"
+                    }
+                },
+                {
+                    "balance": 1100.0,
+                    "acc_no": 1515674279,
+                    "attr": {
+                        "type": "ISA",
+                        "intrest": "5.0"
+                    }
+                }
+            ]
         }
     ],
     "admins": [

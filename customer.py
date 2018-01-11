@@ -34,7 +34,8 @@ class Customer(Person):
         super().load(obj)
         accounts = obj["accounts"]
         for acc_data in accounts:
-            acc = Account(acc_data["balance"],acc_data["acc_no"])
+            acc = Account(0,0,None)
+            acc.load(acc_data)
             self.accounts.append(acc)
     def dump_info(self):
         print("Name: %s" % self.name)
@@ -49,7 +50,7 @@ class Customer(Person):
             print("Account Number: %d" % a.account_no)
             print("Balance: %.2f\n" % a.balance)
             print("Type: %s" % a.attr.type)
-            print("Intrest: %.2f" % a.attr.intrest)
+            print("Intrest: %s" % a.attr.intrest)
 
 
         print('------------------------------')
