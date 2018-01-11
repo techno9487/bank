@@ -36,3 +36,18 @@ class Customer(Person):
         for acc_data in accounts:
             acc = Account(acc_data["balance"],acc_data["acc_no"])
             self.accounts.append(acc)
+    def dump_info(self):
+        print("Name: %s" % self.name)
+
+        addr = ""
+        for a in self.address:
+            addr += "%s\n" % a
+
+        print("Address: %s" % addr)
+
+        for a in self.accounts:
+            print("Account Number: %d" % a.account_no)
+            print("Balance: %.2f\n" % a.balance)
+
+
+        print('------------------------------')

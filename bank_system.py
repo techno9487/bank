@@ -108,3 +108,8 @@ class BankSystem(object):
         f = open("data.json","w")
         f.write(data)
         f.close()
+    def dump_customers(self):
+        for c in self.customers:
+            if c == None:
+                continue
+            c.dump_info()

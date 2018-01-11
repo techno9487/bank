@@ -168,6 +168,10 @@ class CustomerWindow(tk.Frame):
         address_label.grid(row=1,column=0)
     def redraw_info(self):
         self.draw_info(self.info)
+    def open_transfer(self,acc):
+        window = tk.Toplevel()
+        TransferWindow(window,acc,self)
+        print("opening transfer window: %d" % acc.account_no)
 
 class TransferWindow:
     def __init__(self,parent,acc,window):
@@ -312,6 +316,10 @@ class AdminWindow:
 
         self.customer_operations = tk.Frame(self.parent)
         self.customer_operations.grid(row=0,column=1,sticky=tk.N)
+
+        self.own_info = tk.Frame(self.parent)
+        self.own_info.grid(row=0,column=2,sticky=tk.N)
+        self.redraw_info()
     def draw_search(self,frame):
         frame.config( highlightbackground="green", highlightcolor="green", highlightthickness=1,bd=0)
 
@@ -326,12 +334,36 @@ class AdminWindow:
 
         search = ttk.Button(frame,text="Search",command=self.search_customer)
         search.grid(row=2,columnspan=2)
+
+        dump_all = ttk.Button(frame,text="Print All Customers",command=bank.dump_customers)
+        dump_all.grid(row=3,column=0,columnspan=2)
     def search_customer(self):
         customer = bank.search_customers_by_name(self.customer_search_name.get())
         self.customer_search_name.delete(0,tk.END)
         if customer != None:
             CustomerOperations(self.customer_operations,customer)
+    def redraw_info(self):
+        frame = self.own_info
+        frame.config( highlightbackground="green", highlightcolor="green", highlightthickness=1,bd=0)
 
+        for child in frame.winfo_children():
+            child.destroy()
+
+        name = "Name: %s" % self.admin.get_name()
+        name_label = tk.Label(frame,text=name)
+        name_label.grid(row=0,column=0,sticky=tk.W)
+
+        address = "Address: "
+        for a in self.admin.get_address():
+            address += "%s\n" % a
+
+        address_label = tk.Label(frame,text=address)
+        address_label.grid(row=1,column=0)
+
+        update = ttk.Button(frame,text="Update Info",command=self.update_info)
+        update.grid(row=2,column=0,columnspan=2)
+    def update_info(self):
+        UpdateCustomerRecordsDiag(self.admin,self).show()
 
 class CustomerOperations:
     def __init__(self,frame,customer):
@@ -341,12 +373,16 @@ class CustomerOperations:
         self.parent.config( highlightbackground="green", highlightcolor="green", highlightthickness=1,bd=0)
 
         self.options = tk.Frame(self.parent)
-        self.options.grid(sticky=tk.N)
+        self.options.grid(sticky=tk.W)
         self.draw_options()
 
         self.customer_info = tk.Frame(self.parent)
-        self.customer_info.grid(row=1,column=0)
+        self.customer_info.grid(row=1,column=0,sticky=tk.W)
         self.redraw_info()
+
+        self.customer_accounts = tk.Frame(self.parent)
+        self.customer_accounts.grid(row=2,column=0,sticky=tk.W)
+        self.redraw_accounts()
     def clear(self):
         for child in self.parent.winfo_children():
             child.destroy()
@@ -358,6 +394,9 @@ class CustomerOperations:
 
         update = ttk.Button(self.options,text="Update information",command=self.update_info)
         update.grid(column=1,row=0)
+
+        dump = ttk.Button(self.options,text="Print Info",command=self.customer.dump_info)
+        dump.grid(column=2,row=0)
     def update_info(self):
         UpdateCustomerRecordsDiag(self.customer,self).show()
     def redraw_info(self):
@@ -381,6 +420,43 @@ class CustomerOperations:
     def close_account(self):
         self.clear()
         bank.remove_customer(self.customer)
+    def redraw_accounts(self):
+        for child in self.customer_accounts.winfo_children():
+            child.destroy()
+
+        for acc in self.customer.get_accounts():
+            acc_frame = tk.Frame(self.customer_accounts,bd=1)
+
+            id = tk.Label(acc_frame,text="Account Number: %d" % acc.account_no)
+            id.grid()
+
+            balance = tk.Label(acc_frame,text="Balance: %.2f" % acc.balance)
+            balance.grid(row=1,sticky=tk.W)
+
+            transfer_monies = ttk.Button(acc_frame,text="Transfer Money",command=lambda acc=acc: self.open_transfer(acc))
+            transfer_monies.grid(row=2,column=0,sticky=tk.E)
+
+            deposit_monies = ttk.Button(acc_frame,text="Deposit",command=lambda acc=acc:self.deposit(acc))
+            deposit_monies.grid(row=2,column=1)
+
+            withdraw = ttk.Button(acc_frame,text="Withdraw",command=lambda acc=acc:self.withdraw(acc))
+            withdraw.grid(row=2,column=2)
+
+            acc_frame.pack()
+    def deposit(self,acc):
+        amt = AmountDiag().show()
+        acc.balance += amt
+        bank.save_bank_data()
+        self.redraw_accounts()
+    def withdraw(self,acc):
+        amt = AmountDiag().show()
+        acc.balance -= amt
+        bank.save_bank_data()
+        self.redraw_accounts()
+    def open_transfer(self,acc):
+        window = tk.Toplevel()
+        TransferWindow(window,acc,self)
+        print("opening transfer window: %d" % acc.account_no)
 
 
 bank = BankSystem()
