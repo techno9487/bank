@@ -76,6 +76,15 @@ class BankSystem(object):
         self.save_bank_data()
         print("Closed account of %s" % customer.get_name())
 
+    def get_loans(self):
+        loans = []
+
+        for c in self.customers:
+            for a in c.get_accounts():
+                if a.loan is not None:
+                    loans.append(a.loan)
+        return loans
+
     def admin_login(self, name, password):
         admin = self.search_admin_by_name(name)
         if admin == None:

@@ -9,7 +9,7 @@ class Customer(Person):
         self.accounts = []
 
     def open_account(self,addr):
-        acc = Account(100,int(time.time()),addr)
+        acc = Account(100,int(time.time()),addr,self)
         self.accounts.append(acc)
 
     def get_accounts(self):
@@ -34,7 +34,7 @@ class Customer(Person):
         super().load(obj)
         accounts = obj["accounts"]
         for acc_data in accounts:
-            acc = Account(0,0,None)
+            acc = Account(0,0,None,self)
             acc.load(acc_data)
             self.accounts.append(acc)
     def dump_info(self):

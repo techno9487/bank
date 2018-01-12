@@ -16,11 +16,15 @@
                     }
                 },
                 {
-                    "balance": 1100.0,
+                    "balance": 1200.0,
                     "acc_no": 1515674279,
                     "attr": {
                         "type": "ISA",
                         "intrest": "5.0"
+                    },
+                    "loan": {
+                        "amt_left": 100.0,
+                        "due_date": 1517575352.243404
                     }
                 }
             ]

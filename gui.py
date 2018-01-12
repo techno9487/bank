@@ -3,6 +3,7 @@ from tkinter import ttk,messagebox
 import logging
 from bank_system import BankSystem
 from account import AccountAttributes
+from datetime import *
 
 class MainAppliation(tk.Frame):
     def __init__(self,parent):
@@ -136,6 +137,11 @@ class CustomerWindow(tk.Frame):
 
         self.update = ttk.Button(frame,text="Update Info",command=self.update_info)
         self.update.grid(row=1)
+
+        self.loan = ttk.Button(frame,text="Loans",command=self.open_loans)
+        self.loan.grid(row=2,column=0)
+    def open_loans(self):
+        LoanDiag(self.customer,self).show()
     def update_info(self):
         UpdateCustomerRecordsDiag(self.customer,self).show()
     def open_transfer(self,acc):
@@ -374,6 +380,11 @@ class AdminWindow:
 
         dump_all = ttk.Button(frame,text="Print All Customers",command=bank.dump_customers)
         dump_all.grid(row=3,column=0,columnspan=2)
+
+        loan_report = ttk.Button(frame,text="Loan Report",command=self.show_loans)
+        loan_report.grid(row=4,column=0,columnspan=2)
+    def show_loans(self):
+        LoanReportDiag().show()
     def search_customer(self):
         customer = bank.search_customers_by_name(self.customer_search_name.get())
         self.customer_search_name.delete(0,tk.END)
@@ -501,7 +512,162 @@ class CustomerOperations:
         TransferWindow(window,acc,self)
         print("opening transfer window: %d" % acc.account_no)
 
+class LoanDiag:
+    def __init__(self,customer,window):
+        self.customer = customer
+        self.parent = tk.Toplevel()
+        self.window = window
 
+        take_out = ttk.Button(self.parent,text="Take Out Loan",command=self.open_loan_creation)
+        take_out.pack()
+
+        pay_back = ttk.Button(self.parent,text="Payback",command=self.open_payback)
+        pay_back.pack()
+    def open_payback(self):
+        PayLoanDiag(self.customer,self.window).show()
+    def open_loan_creation(self):
+        OpenLoanDiag(self.customer,self.window).show()
+    def show(self):
+        self.parent.wait_window()
+
+class OpenLoanDiag:
+    def __init__(self,customer,window):
+        self.customer = customer
+        self.parent = tk.Toplevel()
+        self.window = window
+
+        self.selected_acc = tk.IntVar()
+
+        accs = []
+        for a in self.customer.get_accounts():
+            accs.append(a.account_no)
+
+        acc_label = tk.Label(self.parent,text="Account:")
+        acc_label.grid()
+
+        self.account = tk.OptionMenu(self.parent,self.selected_acc,*accs)
+        self.account.grid(row=0,column=1)
+
+        amt_label = tk.Label(self.parent,text="Amount:")
+        amt_label.grid(row=1,column=0)
+
+        self.amt = ttk.Entry(self.parent)
+        self.amt.grid(row=1,column=1)
+
+        btn = ttk.Button(self.parent,text="Take Loan",command=self.take_loan)
+        btn.grid(row=2,column=0,columnspan=2)
+    def take_loan(self):
+        acc = self.customer.find_account(self.selected_acc.get())
+        if acc is None:
+            return
+
+        amt = 0
+        try:
+            amt = float(self.amt.get())
+        except ValueError:
+            return
+
+        if not acc.loan is None:
+            messagebox.showerror("Loan","that account already has a loan")
+            return
+
+        success = acc.take_loan(amt)
+        if not success:
+            messagebox.showerror("Loan","Failed to take out loan")
+        else:
+            self.parent.destroy()
+            self.window.redraw_accounts()
+            bank.save_bank_data()
+
+
+    def show(self):
+        self.parent.wait_window()
+
+class PayLoanDiag:
+    def __init__(self,customer,window):
+        self.customer = customer
+        self.window = window
+
+        self.parent = tk.Toplevel()
+
+        self.selected_acc = tk.IntVar()
+
+        accs = []
+        for a in self.customer.get_accounts():
+            accs.append(a.account_no)
+
+        acc_label = tk.Label(self.parent, text="Account:")
+        acc_label.grid()
+
+        self.account = tk.OptionMenu(self.parent, self.selected_acc, *accs)
+        self.account.grid(row=0, column=1)
+
+        amt_label = tk.Label(self.parent, text="Amount:")
+        amt_label.grid(row=1, column=0)
+
+        self.amt = ttk.Entry(self.parent)
+        self.amt.grid(row=1, column=1)
+
+        btn = ttk.Button(self.parent, text="Payback", command=self.payback)
+        btn.grid(row=2, column=0, columnspan=2)
+    def payback(self):
+        acc = self.customer.find_account(self.selected_acc.get())
+        if acc is None:
+            return
+        if acc.loan is None:
+            return
+
+        amt = 0
+        try:
+            amt = float(self.amt.get())
+        except ValueError:
+            return
+
+        success = acc.payback_loan(amt)
+        if not success:
+            messagebox.showerror("Loan","unable to payback loan")
+            return
+
+        self.window.redraw_accounts()
+        bank.save_bank_data()
+        self.parent.destroy()
+
+
+    def show(self):
+        self.parent.wait_window()
+
+class LoanReportDiag:
+    def __init__(self):
+        self.parent = tk.Toplevel()
+
+        loan_holder = tk.Frame(self.parent)
+        loan_holder.grid()
+
+        loans = bank.get_loans()
+
+        for loan in loans:
+            self.draw_loan(loan_holder,loan)
+
+    def draw_loan(self,parent,loan):
+        frame = tk.Frame(parent)
+        name = tk.Label(frame,text="Name: %s" % loan.account.customer.name)
+        name.grid(sticky=tk.W)
+
+        account_no = tk.Label(frame,text="Account: %d" % loan.account.account_no)
+        account_no.grid(row=1,column=0,sticky=tk.W)
+
+        amt = tk.Label(frame,text="Amount Due: %.2f" % loan.amt_left)
+        amt.grid(row=2,column=0,sticky=tk.W)
+
+        date = datetime.fromtimestamp(loan.due_date)
+
+        date_label = tk.Label(frame,text="Due date: %s" % date.strftime("%d/%m/%Y"))
+        date_label.grid(row=3,column=0,sticky=tk.W)
+
+        frame.pack()
+
+    def show(self):
+        self.parent.wait_window()
 bank = BankSystem()
 
 root = tk.Tk()
