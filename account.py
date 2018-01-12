@@ -22,6 +22,22 @@ class Loan:
         self.amt_left = obj["amt_left"]
         self.due_date = obj["due_date"]
 
+class LoanRequest:
+    def __init__(self,amt,account,customer):
+        self.amt = amt
+        self.account = account
+        self.customer = customer
+    def save(self):
+        return {
+            "amt":self.amt,
+            "acc_no":self.account.account_no,
+            "cus":self.customer
+        }
+    def approve(self):
+        self.account.loan = Loan(self.amt,self.account)
+        self.account.balance += self.amt
+
+
 class Account:
         def __init__(self, balance, account_no,attr,customer):
             self.balance = float(balance)
@@ -51,6 +67,16 @@ class Account:
             self.loan = Loan(amt,self)
             self.balance += amt
             print("granted loan to %d for %.2f" % (self.account_no,amt))
+            return True
+
+        def admin_request_loan(self,amt,bank):
+            chance = random.random()
+            if chance <=0.4:
+                return False
+
+            req = LoanRequest(amt,self,self.customer)
+            bank.loan_requests.append(req)
+            bank.save_bank_data()
             return True
 
         def payback_loan(self,amt):

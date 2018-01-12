@@ -383,6 +383,11 @@ class AdminWindow:
 
         loan_report = ttk.Button(frame,text="Loan Report",command=self.show_loans)
         loan_report.grid(row=4,column=0,columnspan=2)
+
+        loan_request = ttk.Button(frame,text="Loan Request",command=self.open_requests)
+        loan_request.grid(row=5,column=0)
+    def open_requests(self):
+        AdminLoanReqDiag().show()
     def show_loans(self):
         LoanReportDiag().show()
     def search_customer(self):
@@ -573,7 +578,11 @@ class OpenLoanDiag:
 
         success = acc.take_loan(amt)
         if not success:
-            messagebox.showerror("Loan","Failed to take out loan")
+            success = acc.admin_request_loan(amt,bank)
+            if not success:
+                messagebox.showerror("Loan","Sorry failed to take out loan")
+            else:
+                messagebox.showinfo("Loan","your request has been passed onto the admin")
         else:
             self.parent.destroy()
             self.window.redraw_accounts()
@@ -668,6 +677,58 @@ class LoanReportDiag:
 
     def show(self):
         self.parent.wait_window()
+
+class AdminLoanReqDiag:
+    def __init__(self):
+        self.parent = tk.Toplevel()
+
+        self.request_holder = tk.Frame(self.parent)
+        self.request_holder.grid()
+
+        self.redraw_requests()
+    def redraw_requests(self):
+        for child in self.request_holder.winfo_children():
+            child.destroy()
+
+        for req in bank.loan_requests:
+            self.draw_request(req)
+
+    def draw_request(self,request):
+        frame = tk.Frame(self.request_holder)
+
+        name = tk.Label(frame,text="Customer: %s" % request.customer.name)
+        name.grid(sticky=tk.W)
+
+        acc = tk.Label(frame,text="Account: %d" % request.account.account_no)
+        acc.grid(row=1,column=0,sticky=tk.W)
+
+        amt = tk.Label(frame,text="Amount: %.2f" % request.amt)
+        amt.grid(row=2,column=0,sticky=tk.W)
+
+        reject = ttk.Button(frame,text="Reject",command=lambda r=request: self.reject_request(r))
+        reject.grid(row=3,column=0,sticky=tk.W)
+
+        accept = ttk.Button(frame,text="Accept",command=lambda r=request: self.accept_request(r))
+        accept.grid(row=3,column=0,sticky=tk.E)
+
+        frame.pack()
+
+    def accept_request(self,req):
+        req.approve()
+        bank.remove_request(req)
+        bank.save_bank_data()
+        print("approved request of %.2f for %d" % (req.amt,req.account.account_no))
+        self.redraw_requests()
+
+    def reject_request(self,req):
+        bank.remove_request(req)
+        bank.save_bank_data()
+        print("Rejected loan request for %d" % req.account.account_no)
+        self.redraw_requests()
+    def show(self):
+        self.parent.wait_window()
+
+
 bank = BankSystem()
 
 root = tk.Tk()

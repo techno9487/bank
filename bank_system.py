@@ -1,12 +1,15 @@
 from customer import Customer
 from admin import Admin
 import os,json,os.path
+from account import LoanRequest
 	
 class BankSystem(object):
     def __init__(self):
         self.data = {}
         self.customers = []
         self.admins = []
+        self.loan_requests = []
+
         self.load_bank_data()
         
     #load bank data from disk
@@ -19,6 +22,7 @@ class BankSystem(object):
 
             self.load_customers()
             self.load_admins()
+            self.load_requests()
 
     #load customers from the data
     def load_customers(self):
@@ -41,6 +45,41 @@ class BankSystem(object):
             self.admins.append(ad)
 
             print("Loaded admin: %s" % ad.get_name())
+
+    #loads loan requests
+    def load_requests(self):
+        if "requests" not in self.data:
+            return
+
+        for req in self.data["requests"]:
+            if req is None:
+                continue
+
+            acc = self.find_account(req["acc_no"])
+            if acc is None:
+                continue
+
+            cus = self.search_customers_by_name(req["cus"])
+            if cus is None:
+                continue
+
+            r = LoanRequest(req["amt"],acc,cus)
+            self.loan_requests.append(r)
+
+            print("Loaded loan request for %d" % acc.account_no)
+
+    def remove_request(self,req):
+        self.loan_requests.remove(req)
+        self.save_bank_data()
+
+
+    def find_account(self,acc_no):
+        for c in self.customers:
+            for a in c.get_accounts():
+                if a.account_no == acc_no:
+                    return a
+
+        return None
 
     def customer_login(self, name, password):
         #STEP A.1
@@ -110,9 +149,14 @@ class BankSystem(object):
         for admin in self.admins:
             admnins_data.append(admin.save())
 
+        requests = []
+        for r in self.loan_requests:
+            requests.append(r.save())
+
         data = json.dumps({
             "customers":customers_data,
-            "admins":admnins_data
+            "admins":admnins_data,
+            "requests":requests
         },indent=4)
         f = open("data.json","w")
         f.write(data)

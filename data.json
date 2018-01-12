@@ -8,7 +8,7 @@
             ],
             "accounts": [
                 {
-                    "balance": 100.0,
+                    "balance": 5200.0,
                     "acc_no": 1515673951,
                     "attr": {
                         "type": "Current Account",
@@ -16,15 +16,15 @@
                     }
                 },
                 {
-                    "balance": 1200.0,
+                    "balance": 7800.0,
                     "acc_no": 1515674279,
                     "attr": {
                         "type": "ISA",
                         "intrest": "5.0"
                     },
                     "loan": {
-                        "amt_left": 100.0,
-                        "due_date": 1517575352.243404
+                        "amt_left": 1234.56,
+                        "due_date": 1517593979.154775
                     }
                 }
             ]
@@ -39,5 +39,6 @@
             ],
             "admin": true
         }
-    ]
+    ],
+    "requests": []
 }
