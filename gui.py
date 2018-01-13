@@ -71,6 +71,12 @@ class RegisterPerson(tk.Frame):
         self.register.grid(row=3,column=2,sticky=tk.E)
 
     def register(self):
+
+        #check that none of them are empty
+        if self.name.get() == "" or self.pwd.get() == "" or self.addr.get(1,0,tk.END) == "":
+            messagebox.showerror("Registration","Please make sure all information is filled out")
+            return
+
         addr = []
         for a in self.addr.get(1.0,tk.END).split('\n'):
             if a != "":
