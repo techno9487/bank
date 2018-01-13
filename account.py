@@ -31,7 +31,7 @@ class LoanRequest:
         return {
             "amt":self.amt,
             "acc_no":self.account.account_no,
-            "cus":self.customer
+            "cus":self.customer.name
         }
     def approve(self):
         self.account.loan = Loan(self.amt,self.account)

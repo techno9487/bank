@@ -35,7 +35,9 @@
             "name": "admin",
             "password": "password",
             "address": [
-                "1 god place"
+                "Buckingham Palace",
+                "London",
+                "England"
             ],
             "admin": true
         }
