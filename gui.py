@@ -696,6 +696,9 @@ class AdminLoanReqDiag:
         for child in self.request_holder.winfo_children():
             child.destroy()
 
+        title = tk.Label(self.request_holder,text="LOAN REQUESTS")
+        title.pack()
+
         for req in bank.loan_requests:
             self.draw_request(req)
 

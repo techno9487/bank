@@ -8,7 +8,7 @@
             ],
             "accounts": [
                 {
-                    "balance": 5200.0,
+                    "balance": 5000.0,
                     "acc_no": 1515673951,
                     "attr": {
                         "type": "Current Account",
